@@ -15,4 +15,4 @@ Audit and compliance measures are implemented with CloudTrail—logging to both 
 The configuration outputs include the EKS cluster endpoint, the MongoDB backup bucket name, the public IP of the MongoDB instance, and the sensitive SSH private key.  
 
 
-v1
+v2
