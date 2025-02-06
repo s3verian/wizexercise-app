@@ -1,1 +1,15 @@
-WIZ | TECHNICAL EXERCISE v3.0
+This Terraform configuration leverages AWS, Random, and TLS providers while disabling account-level public access blocking for S3. It retrieves the current AWS caller identity and sets up a local backup script that creates timestamped MongoDB backups with mongodump, syncs them to an S3 bucket, and cleans up temporary files. An RSA 2048-bit key is generated to create an AWS key pair named “wizexercise-key.” 
+
+The networking infrastructure includes a VPC with a 10.0.0.0/16 CIDR, one public subnet in us-west-2a (CIDR 10.0.1.0/24) and two private subnets in us-west-2a and us-west-2b (CIDR 10.0.2.0/24 and 10.0.3.0/24), an Internet Gateway, a NAT Gateway (with an allocated Elastic IP), and corresponding route tables that direct traffic appropriately. 
+
+Two S3 buckets are provisioned: one with a unique name for MongoDB backups (allowing public read and list access) and another private bucket for CloudTrail logs configured with policies to permit necessary CloudTrail actions. 
+
+An IAM role with AmazonS3FullAccess is created for MongoDB and attached to an instance profile, which is then used by a t3.micro EC2 instance launched in the public subnet. 
+
+This instance, secured with a dedicated security group, runs a user data script that updates the OS, installs MongoDB 8.0 and AWS CLI v2, sets up a backup directory with a daily cron job, and creates a MongoDB admin user with enabled authorization. 
+
+Additionally, an EKS cluster is established in the private subnets with a public API endpoint and extensive logging, supported by a node group of t3.small spot instances configured for remote SSH access via the generated key pair. 
+
+Audit and compliance measures are implemented with CloudTrail—logging to both S3 and CloudWatch (with a 7-day retention log group) and an AWS Config recorder that captures configuration changes across resources. 
+
+The configuration outputs include the EKS cluster endpoint, the MongoDB backup bucket name, the public IP of the MongoDB instance, and the sensitive SSH private key.
